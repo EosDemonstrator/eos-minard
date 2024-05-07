@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+{% block title %}Eos Runs{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+  <div class="container">
+    <div class="row">
+      <center> <h1 style="color:#04AA6D"> Detector status </h1> </center>
+      <div class="col-md-4">
+        <h3 style="color:#04AA6D"> HV summary </h3>
+        <table class="table table-bordered" id="hvtable">
+          <tr>
+            <th> High voltage board </th>
+            <th> Disabled channels </th>
+          </tr>
+        {% for hv in hvs %}
+          <tr>
+            <td> {{ hv[0]['slot'] }} </td>
+           <td>
+            {% for i in range (hv[0]['enabled']|length) %}
+              {% if hv[0]['enabled'][i] == False %}
+                {{ i }}
+              {% endif %}
+            {% endfor %}
+            </td>
+          </tr>
+        {% endfor %}
+        </table>
+      </div>
+      <div class="col-md-8">
+        <h3 style="color:#04AA6D"> PTB summary </h3>
+        <table class="table table-bordered" id="hvtable">
+          <tr>
+            <th> MTCA trigger enabled </th>
+            <th> MTCA Hi thresh </th>
+            <th> MTCA Med thresh </th>
+            <th> MTCA Lo thresh </th>
+            <th> Pulsed trigger enabled </th>
+            <th> Pulser rate </th>
+            <th> Calibration delay </th>
+          </tr>
+          <tr>
+            <td> {{ ptb['mtca_enabled'] }} </td>
+            <td> {{ ptb['mtca_threshold_hi'] }} </td>
+            <td> {{ ptb['mtca_threshold_med'] }} </td>
+            <td> {{ ptb['mtca_threshold_lo'] }} </td>
+            <td> {{ ptb['pulser_enabled'] }} </td>
+            <td> {{ ptb['pulser_rate'] }} </td>
+            <td> {{ ptb['calibration_delay']*16 }} </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h3 style="color:#04AA6D"> CAEN summary </h3>
+        <table class="table table-bordered" id="hvtable">
+          <tr>
+            <th> Board name </th>
+            <th> Ext. trigger enabled </th>
+            <th> Window size (ns) </th>
+            <th> Post trig. size (ns)  </th>
+            <th> Disabled channels </th>
+          </tr>
+        {% for caen in caens %}
+          <tr>
+            <td> {{ caen[0]['name'] }} </td>
+            <td> {{ caen[0]['external_trigger_enable'] }} </td>
+            <td> {{ caen[0]['record_length']*2.0 }} </td>
+            <td> {{ caen[0]['post_trigger']*2.0 }} </td>
+            <td>
+            {% for i in range (caen[0]['enabled']|length) %}
+              {% if caen[0]['enabled'][i] == False %}
+                {{ i }}
+              {% endif %}
+            {% endfor %}
+            </td>
+          </tr>
+        {% endfor %}
+        </table>
+      </div>
+      <div class="col-md-6">
+        <h3 style="color:#04AA6D"> HVSS summary (TO-DO) </h3>
+        <table class="table table-bordered" id="hvtable">
+          <tr>
+            <th> Board </th>
+            <th> Thresholds </th>
+            <th> Nhit Widths </th>
+          </tr>
+        {% for i in range(hvsss[0]|length) %}
+          <tr>
+            <td> {{ i }} </td>
+            <td> 1.6 </td>
+            <td> 2.0 </td>
+          </tr>
+        {% endfor %}
+        </table>
+      </div>
+    </div>\
+  </div>
+
+{% endblock %}

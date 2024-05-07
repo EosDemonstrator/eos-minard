@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}Eos Runs{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+  <div class="container">
+    <div class="row">
+      <center> <h1 style="color:#04AA6D"> Detector runs </h1> </center>
+      <table class="table table-bordered" id="hvtable">
+        <tr>
+          <th> Index </th>
+          <th> Filename </th>
+          <th> Run </th>
+          <th> Run type </th>
+          <th> Events </th>
+          <th> Files </th>
+          <th> Fiber </th>
+          <th> Intensity </th>
+          <th> Comment </th>
+       </tr>
+        {% for i in range(data|length) %}
+          {% if data[i]['key'] != 1 %}
+          <tr>
+            <td> <a onclick="location.href='{{ url_for('eos_run') }}?key={{ data[i]['key'] }}'"; style="cursor: pointer; cursor: hand;"> {{ data[i]['key'] }}  </a> </td>
+            <td> {{ data[i]['filename'] }} </td>
+            <td> {{ data[i]['run_number'] }} </td>
+            <td> {{ run_type[data[i]['run_type']] }} </td>
+            <td> {{ data[i]['events'] }} </td>
+            <td> {{ data[i]['files'] }} </td>
+            <td> {{ data[i]['fiber_number'] }} </td>
+            <td> {{ data[i]['laser_intensity'] }} </td>
+            <td> {{ data[i]['comment'] }} </td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}
