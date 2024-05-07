@@ -52,6 +52,8 @@ from datetime import datetime
 from functools import wraps, update_wrapper
 #from minard.dead_time import get_dead_time, get_dead_time_runs, get_dead_time_run_by_key
 #from minard.radon_monitor import get_radon_monitor
+from minard.eos import get_eos_runs, get_eos_settings
+from minard.high_voltage import get_all_hvs
 
 TRIGGER_NAMES = \
 ['100L',
@@ -821,4 +823,50 @@ def nearline_monitoring_summary():
                 displayed_runs.append(run)
 
     return render_template('nearline_monitoring_summary.html', runs=displayed_runs, selected_run=selected_run, limit=limit, clock_jumps=clock_jumps, ping_crates=ping_crates, channel_flags=channel_flags, occupancy=occupancy, muons=muons, crate_gain=crate_gain, runTypes=runTypes, run_range_low=run_range_low, run_range_high=run_range_high, allrunTypes=allrunTypes, selectedType=selectedType, gold=gold)
+
+
+@app.route("/eos_runs")
+def eos_runs():
+    return render_template('eos_runs.html', data=get_eos_runs(), run_type=RUN_TYPES)
+
+@app.route("/eos_run")
+def eos_run():
+    key = request.args.get("key", 1, type=int)
+
+    data = get_eos_settings(key, 'run_settings')
+    data = data[0]
+
+    hvs = []
+    for i in range(6):
+        hv_str = "hv"+str(i)
+        hvs.append(get_eos_settings(int(data[hv_str]), 'high_voltage'))
+
+    caens = []
+    for i in range(17):
+        caen_str = "caen"+str(i)
+        caens.append(get_eos_settings(int(data[caen_str]), 'caen'))
+
+    hvsss = []
+    for i in range(17):
+        hvss_str = "hvss"+str(i)
+        hvsss.append(get_eos_settings(int(data[hvss_str]), 'hvss'))
+
+    ptb = get_eos_settings(int(data["ptb"]), 'ptb')[0]
+
+    return render_template('eos_run.html', data=data, hvs=hvs, caens=caens, hvsss=hvsss, ptb=ptb)
+
+@app.route("/hv")
+def hv():
+    data = []
+    ts = []
+    for slot in range(6):
+        data.append(get_all_hvs(slot))
+        try:
+            timestamp = data[slot][0]["timestamp"]
+            timestamp = str(timestamp)[0:19]
+            ts.append(timestamp)
+        except Exception as e:
+            pass
+
+    return render_template("hv.html", data=data, ts=ts)
 
