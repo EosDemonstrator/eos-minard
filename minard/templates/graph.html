@@ -23,7 +23,7 @@
             <div class="row">
                 <div class="col-md-12 text-right">
                     <select class="name-select name-select-active" id="name-select-{{ loop.index0 }}">
-                        {% for name in ['TOTAL','100L','100M','100H','20','20LB', 'ESUMH', 'OWLN', 'OWLEH','PULGT','PRESCL', 'PED','PONG','SYNC','EXTA', 'EXT2', 'EXT6', 'SOFGT','MISS','FECD/100L','FECD/100M','FECD/100H','FECD/20','FECD/20LB','TOTAL-nhit','TOTAL-charge','PULGT-nhit','PULGT-charge','EXTA-nhit', '100L-Baseline', '100M-Baseline', '100H-Baseline', '20LB-Baseline', '20-Baseline', 'ESUML-Baseline', 'ESUMH-Baseline', 'OWLN-Baseline', 'OWLEH-Baseline'] %}
+                        {% for name in ['TOTAL','100L','100M','100H'] %}
                             <option {% if _name == name %}selected="selected" {%endif %}value="{{ name }}">{{ name }}</option>
                         {% endfor %}
                     </select>
@@ -36,7 +36,7 @@
         <div class="row">
             <div class="col-md-12 text-right">
                 <select class="name-select">
-                    {% for name in ['TOTAL','100L','100M','100H','20','20LB', 'ESUMH', 'OWLN', 'OWLEH','PULGT','PRESCL', 'PED','PONG','SYNC','EXTA', 'EXT2', 'EXT6', 'SOFGT','MISS','FECD/100L','FECD/100M','FECD/100H','FECD/20','FECD/20LB','TOTAL-nhit','TOTAL-charge','PULGT-nhit','PULGT-charge','EXTA-nhit', '100L-Baseline', '100M-Baseline', '100H-Baseline', '20LB-Baseline', '20-Baseline', 'ESUML-Baseline', 'ESUMH-Baseline', 'OWLN-Baseline', 'OWLEH-Baseline'] %}
+                    {% for name in ['TOTAL','100L','100M','100H'] %}
                         <option value="{{ name }}">{{ name }}</option>
                     {% endfor %}
                 </select>
