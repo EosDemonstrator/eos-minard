@@ -1,4 +1,5 @@
 from db import engine
+from sqlalchemy import text
 
 def get_all_hvs(slot):
     '''
@@ -6,7 +7,7 @@ def get_all_hvs(slot):
     '''
     conn = engine.connect()
 
-    result = conn.execute("SELECT * FROM (SELECT * FROM hv_status WHERE slot=%d ORDER BY timestamp DESC LIMIT 48) as t1 ORDER BY channel ASC" % slot)
+    result = conn.execute(text("SELECT * FROM (SELECT * FROM hv_status WHERE slot=%d ORDER BY timestamp DESC LIMIT 48) as t1 ORDER BY channel ASC" % slot))
 
     keys = result.keys()
     rows = result.fetchall()
