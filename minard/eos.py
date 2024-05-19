@@ -6,7 +6,7 @@ def get_eos_runs():
     '''
     conn = engine.connect()
 
-    result = conn.execute("SELECT key, events, files, run_type, run_number, filename, fiber_number, laser_intensity, comment FROM run_settings ORDER BY timestamp DESC LIMIT 50")
+    result = conn.execute("SELECT key, timestamp, events, files, run_type, run_number, filename, fiber_number, laser_intensity, power_meter, comment FROM run_settings ORDER BY timestamp DESC LIMIT 50")
 
     keys = result.keys()
     rows = result.fetchall()

@@ -12,6 +12,7 @@
       <table class="table table-bordered" id="hvtable">
         <tr>
           <th> Index </th>
+          <th> Timestamp </th>
           <th> Filename </th>
           <th> Run </th>
           <th> Run type </th>
@@ -19,12 +20,14 @@
           <th> Files </th>
           <th> Fiber </th>
           <th> Intensity </th>
+          <th> Power (uW) </th>
           <th> Comment </th>
        </tr>
         {% for i in range(data|length) %}
           {% if data[i]['key'] != 1 %}
           <tr>
             <td> <a onclick="location.href='{{ url_for('eos_run') }}?key={{ data[i]['key'] }}'"; style="cursor: pointer; cursor: hand;"> {{ data[i]['key'] }}  </a> </td>
+            <td> {{ data[i]['timestamp'] }} </td>
             <td> {{ data[i]['filename'] }} </td>
             <td> {{ data[i]['run_number'] }} </td>
             <td> {{ run_type[data[i]['run_type']] }} </td>
@@ -32,6 +35,7 @@
             <td> {{ data[i]['files'] }} </td>
             <td> {{ data[i]['fiber_number'] }} </td>
             <td> {{ data[i]['laser_intensity'] }} </td>
+            <td> {{ data[i]['power_meter'] }} </td>
             <td> {{ data[i]['comment'] }} </td>
           </tr>
           {% endif %}
