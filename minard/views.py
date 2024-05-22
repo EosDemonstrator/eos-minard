@@ -349,7 +349,12 @@ def metric():
 
 @app.route("/eos_runs")
 def eos_runs():
-    return render_template('eos_runs.html', data=get_eos_runs(), run_type=RUN_TYPES)
+    data = get_eos_runs()
+    timestamps = []
+    for i in range(len(data)):
+        timestamps.append(str(data[i]['timestamp'])[:19])
+
+    return render_template('eos_runs.html', data=data, timestamps=timestamps, run_type=RUN_TYPES)
 
 @app.route("/eos_run")
 def eos_run():

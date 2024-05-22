@@ -2,6 +2,9 @@
 {% block title %}Eos Runs{% endblock %}
 {% block head %}
     {{ super() }}
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/eostable.css') }}" media="screen">
+
 {% endblock %}
 {% block body %}
     {{ super() }}
@@ -9,34 +12,37 @@
   <div class="container">
     <div class="row">
       <center> <h1 style="color:#04AA6D"> Detector runs </h1> </center>
-      <table class="table table-bordered" id="hvtable">
+      <table class="table table-bordered" id="eostable">
         <tr>
-          <th> Index </th>
           <th> Timestamp </th>
           <th> Filename </th>
-          <th> Run </th>
+          <th> Run # </th>
           <th> Run type </th>
-          <th> Events </th>
+          <th> Events / File </th>
           <th> Files </th>
           <th> Fiber </th>
           <th> Intensity </th>
-          <th> Power (uW) </th>
           <th> Comment </th>
+          <th> Detector state link </th>
        </tr>
         {% for i in range(data|length) %}
           {% if data[i]['key'] != 1 %}
           <tr>
-            <td> <a onclick="location.href='{{ url_for('eos_run') }}?key={{ data[i]['key'] }}'"; style="cursor: pointer; cursor: hand;"> {{ data[i]['key'] }}  </a> </td>
-            <td> {{ data[i]['timestamp'] }} </td>
+            <td> {{ timestamps[i] }} </td>
             <td> {{ data[i]['filename'] }} </td>
             <td> {{ data[i]['run_number'] }} </td>
             <td> {{ run_type[data[i]['run_type']] }} </td>
-            <td> {{ data[i]['events'] }} </td>
+            <td> {{ data[i]['events']/17 }} </td>
             <td> {{ data[i]['files'] }} </td>
-            <td> {{ data[i]['fiber_number'] }} </td>
-            <td> {{ data[i]['laser_intensity'] }} </td>
-            <td> {{ data[i]['power_meter'] }} </td>
+            {% if data[i]['run_type'] == 2 %}
+                <td> {{ data[i]['fiber_number'] }} </td>
+                <td> {{ data[i]['laser_intensity'] }} </td>
+            {% else %}
+                <td> - </td>
+                <td> - </td>
+            {% endif %}
             <td> {{ data[i]['comment'] }} </td>
+            <td> <a onclick="location.href='{{ url_for('eos_run') }}?key={{ data[i]['key'] }}'"; style="cursor: pointer; cursor: hand;"> {{ data[i]['key'] }}  </a> </td>
           </tr>
           {% endif %}
         {% endfor %}
