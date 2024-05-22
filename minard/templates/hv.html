@@ -37,7 +37,7 @@
                   </tr>
                   <tr>
                     <td> {{ j }} </td>
-                    <td> {{ (j % 16 }} </td>
+                    <td> {{ j % 16 }} </td>
                     {% if data[slot][j]["powered"] == 1 and data[slot][j]["current"] < 50 %}
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["voltage"] }} </td>
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["current"] }} </td>
