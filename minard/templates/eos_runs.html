@@ -22,6 +22,7 @@
           <th> Files </th>
           <th> Fiber </th>
           <th> Intensity </th>
+          <th> Source z (mm) </th>
           <th> Comment </th>
           <th> Detector state link </th>
        </tr>
@@ -39,6 +40,11 @@
                 <td> {{ data[i]['laser_intensity'] }} </td>
             {% else %}
                 <td> - </td>
+                <td> - </td>
+            {% endif %}
+            {% if data[i]['run_type'] == 3 %}
+                <td> {{ data[i]['source_pos_z'] }} </td>
+            {% else %}
                 <td> - </td>
             {% endif %}
             <td> {{ data[i]['comment'] }} </td>
