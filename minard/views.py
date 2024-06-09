@@ -13,7 +13,7 @@ from minard.tools import parseiso, total_seconds
 from minard.timeseries import get_timeseries, get_interval, get_hash_timeseries
 from minard.timeseries import get_timeseries_field, get_hash_interval
 from minard.timeseries import get_cavity_temp
-from minard.eos import get_eos_runs, get_eos_settings
+from minard.eos import get_eos_runs, get_eos_settings, get_gold_runs
 from minard.high_voltage import get_all_hvs
 
 TRIGGER_NAMES = ['100L', '100M', '100H']
@@ -347,6 +347,12 @@ def metric():
         return jsonify(values=[get_metric(name, start, stop, step) for name in expr.split(',')])
     else:
         return jsonify(values=get_metric(expr, start, stop, step))
+
+@app.route("/gold_runs")
+def gold_runs():
+    data = get_gold_runs()
+
+    return render_template('gold_runs.html', data=data, run_type=RUN_TYPES, source_type=SOURCE_TYPES)
 
 @app.route("/eos_runs")
 def eos_runs():

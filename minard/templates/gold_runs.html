@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Eos Runs{% endblock %}
+{% block head %}
+    {{ super() }}
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/eostable.css') }}" media="screen">
+
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+  <div class="container">
+    <div class="row">
+      <center> <h1 style="color:#04AA6D"> Gold runs </h1> </center>
+      <table class="table table-bordered" id="eostable">
+        <tr>
+          <th> Run # </th>
+          <th> Run type </th>
+          <th> Source </th>
+          <th> Source z (mm) </th>
+          <th> Comment </th>
+       </tr>
+        {% for i in range(data|length) %}
+          <tr>
+            <td> {{ data[i]['run_number'] }} </td>
+            <td> {{ run_type[data[i]['run_type']] }} </td>
+            <td> {{ source_type[data[i]['source_type']] }} </td>
+            <td> {{ data[i]['source_z_pos'] }} </td>
+            <td> {{ data[i]['comment'] }} </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}
