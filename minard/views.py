@@ -18,6 +18,7 @@ from minard.high_voltage import get_all_hvs
 
 TRIGGER_NAMES = ['100L', '100M', '100H']
 RUN_TYPES = {0: 'Diagnostic', 1: 'Physics', 2: 'Fiber calibration', 3: 'Deployed calibration'}
+SOURCE_TYPES = {0: 'Laserball', 1: 'AmBe', 2: 'PuBe', 3: '137Cs', 4: 'Directional'}
 
 
 redis = Redis(decode_responses=True)
@@ -354,7 +355,7 @@ def eos_runs():
     for i in range(len(data)):
         timestamps.append(str(data[i]['timestamp'])[:19])
 
-    return render_template('eos_runs.html', data=data, timestamps=timestamps, run_type=RUN_TYPES)
+    return render_template('eos_runs.html', data=data, timestamps=timestamps, run_type=RUN_TYPES, source_type=SOURCE_TYPES)
 
 @app.route("/eos_run")
 def eos_run():

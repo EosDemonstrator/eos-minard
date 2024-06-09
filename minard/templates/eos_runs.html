@@ -22,6 +22,7 @@
           <th> Files </th>
           <th> Fiber </th>
           <th> Intensity </th>
+          <th> Source </th>
           <th> Source z (mm) </th>
           <th> Comment </th>
           <th> Detector state link </th>
@@ -43,8 +44,10 @@
                 <td> - </td>
             {% endif %}
             {% if data[i]['run_type'] == 3 %}
+                <td> {{ source_type[data[i]['source_type']] }} </td>
                 <td> {{ data[i]['source_pos_z'] }} </td>
             {% else %}
+                <td> - </td>
                 <td> - </td>
             {% endif %}
             <td> {{ data[i]['comment'] }} </td>
