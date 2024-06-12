@@ -24,8 +24,13 @@
           <tr>
             <td> {{ data[i]['run_number'] }} </td>
             <td> {{ run_type[data[i]['run_type']] }} </td>
-            <td> {{ source_type[data[i]['source_type']] }} </td>
-            <td> {{ data[i]['source_z_pos'] }} </td>
+            {% if data[i]['run_type'] == 3 %}
+              <td> {{ source_type[data[i]['source_type']] }} </td>
+              <td> {{ data[i]['source_z_pos'] }} </td>
+            {% else %}
+              <td> - </td>
+              <td> - </td>
+            {% endif %}
             <td> {{ data[i]['comment'] }} </td>
           </tr>
         {% endfor %}
