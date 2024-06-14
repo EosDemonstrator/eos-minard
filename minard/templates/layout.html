@@ -30,35 +30,28 @@
             <div class="container">
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <!-- Dropdown L2 -->
-                        {{ nav_link('snostream', 'Stream') }}
-						 <!-- Dropdown DAQ -->
-                        {{ nav_link('daq', 'DAQ') }}
-                        <!-- Dropdown Detector -->
-
+                        {{ nav_link('eosstream', 'Stream') }}
+                        <!-- Dropdown Detector-->
                         <li class='dropdown'>
 			<a href='#' class='dropdown-toggle' data-toggle='dropdown'>Detector <b class='caret'></b></a>
-                            <ul class='dropdown-menu'>
-                                {{ nav_link('detector', 'Occupancy') }}
-                            </ul>
-                        <!-- Dropdown Logs -->
-                        <li class='dropdown'>
-			<a href='#' class='dropdown-toggle' data-toggle='dropdown'>Logs <b class='caret'></b></a>
-                            <ul class='dropdown-menu'>
-                                <li><a href="/monitoring/logs">DAQ Logs</a></li>
-                            </ul>
+                        <ul class='dropdown-menu'>
+                            {{ nav_link('detector', 'Occupancy') }}
+                            {{ nav_link('eos_runs', 'Runs') }}
+                            {{ nav_link('gold_runs', 'Gold Runs') }}
+                            {{ nav_link('hv', 'High Voltage Polling') }}
+                        </ul>
                         <!-- Dropdown Etcheverry -->
                         <li class='dropdown'>
 			<a href='#' class='dropdown-toggle' data-toggle='dropdown'>Etcheverry <b class='caret'></b></a>
-                            <ul class='dropdown-menu'>
-                                {{ nav_link('cavity_temp', 'Cavity Temperature') }}
-                            </ul>
-						<!-- Digitizer -->
-						<li class='dropdown'>
-							<a href='#' class='dropdown-toggle' data-toggle='dropdown'>Digitizer <b class='caret'></b></a>
-							<ul class='dropdown-menu'>
-								{{ nav_link('digitizer', 'Digitizer') }}
-							</ul>
+                        <ul class='dropdown-menu'>
+                            {{ nav_link('cavity_temp', 'Cavity Temperature') }}
+                        </ul>
+                        <!-- Digitizer -->
+                        <li class='dropdown'>
+                        <a href='#' class='dropdown-toggle' data-toggle='dropdown'>Digitizer <b class='caret'></b></a>
+                        <ul class='dropdown-menu'>
+                            {{ nav_link('digitizer', 'Digitizer') }}
+                        </ul>
                     </ul>
                 </div><!--/.navbar-collapse -->
             </div>

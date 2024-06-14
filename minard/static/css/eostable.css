@@ -1,0 +1,34 @@
+body,h1 {font-family: "Raleway", Arial, sans-serif}
+
+#eostable {
+  font-family: "Raleway", Arial, sans-serif;
+  border-collapse: separate;
+  width: 100%;
+}
+
+#eostable td, #eostable th {
+  border: 2px solid #ddd;
+  padding: 6px;
+}
+
+#eostable tr:nth-child(even){background-color: #f2f2f2;}
+
+#eostable tr:hover {
+  background-color: #04AA6D;
+  color: white;
+}
+
+#eostable th {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+  overflow: auto;
+}
+
+th {
+  position: sticky;
+  top: 0;
+}
+

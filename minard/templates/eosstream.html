@@ -29,9 +29,6 @@
             <div class="col-md-4">
                 <p>Dispatcher: <span id='dispatcher'></span></p>
             </div>
-            <div class="col-md-2 col-md-offset-4 text-right">
-                <a href="{{ url_for("snostream",step=step,height=height,display="fecd") }}">Show FEC/D trigger rates</a>
-            </div>
             <div class="col-md-2 text-right">
                 <select id="step-menu">
                     {% for i, text in [(1,"15 min"), (4, "1 hour"), (8, "3 hours"), (32, "9 hours"), (128, "1 day"), (256, "3 days"), (1024, "1 week"), (2048, "1 month"), (8192, "3 months"), (32768, "1 year"), (262144, "10 years")] %}
@@ -72,5 +69,5 @@
                 .catch(error => console.log(error));
         }
     </script>
-    <script src="{{ url_for('static', filename='js/snostream.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/eosstream.js') }}"></script>
 {% endblock %}

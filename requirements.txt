@@ -1,12 +1,5 @@
 flask
 gunicorn
-#numpy
 redis
-#argparse
-#sphinx
-#requests
 sqlalchemy
 psycopg2
-#alabaster
-couchdb
-wtforms
