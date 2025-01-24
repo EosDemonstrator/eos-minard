@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block title %}Eos Runs{% endblock %}
+{% block head %}
+    {{ super() }}
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/eostable.css') }}" media="screen">
+
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+  <div class="container">
+    <div class="row">
+      <center> <h1 style="color:#04AA6D"> Detector runs </h1> </center>
+      <table class="table table-bordered" id="eostable">
+        <tr>
+          <th> Timestamp </th>
+          <th> Run # </th>
+          <th> Run type </th>
+          <th> Events / File </th>
+          <th> Files </th>
+          <th> Source </th>
+          <th> Source z (mm) </th>
+	  <th> Threshold (mV) </th>
+          <th> Comment </th>
+          <th> State </th>
+       </tr>
+        {% for i in range(data|length) %}
+          {% if data[i]['key'] != 1 %}
+          <tr>
+            <td> {{ timestamps[i] }} </td>
+            <td> {{ data[i]['run_number'] }} </td>
+            <td> {{ run_type[data[i]['run_type']] }} </td>
+	    {% if data[i]['events'] == 1 %}
+	      <td> N/A (Builder run) </td>
+	      <td> N/A </td>
+	   {% else %}
+              <td> {{ data[i]['events']/17 }} </td>
+	      <td> {{ data[i]['files'] }} </td>
+           {% endif %}
+            {% if data[i]['run_type'] == 3 %}
+              {% if data[i]['source_type'] == 0 %}
+	        <td> {{ source_type[data[i]['source_type']] }} ({{ data[i]['laserball_size'] }} mm, {{ data[i]['laser_wavelength'] }} nm) </td>
+	      {% else %}
+                <td> {{ source_type[data[i]['source_type']] }} </td>
+	      {% endif %}
+              <td> {{ data[i]['source_pos_z'] }} </td>
+            {% elif data[i]['run_type'] == 2 %}
+                <td> Fiber {{ data[i]['fiber_number'] }} </td>
+                <td> </td>
+            {% else %}
+                <td> </td>
+                <td> </td>
+            {% endif %}
+	    <td> {{ data[i]['trig_thresh'] }} </td>
+            <td> {{ data[i]['comment'] }} </td>
+            <td> <a onclick="location.href='{{ url_for('eos_run') }}?key={{ data[i]['key'] }}'"; style="cursor: pointer; cursor: hand;"> {{ data[i]['key'] }}  </a> </td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}

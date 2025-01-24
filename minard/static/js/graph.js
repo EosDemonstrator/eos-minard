@@ -27,7 +27,8 @@ function add_graph(name, start, stop, step)
             '&now=' + new Date().toISOString() +
             '&step=' + Math.floor(step),
             function(data) {
-                if (!data) console.log('unable to load data');
+                console.log(stop.toISOString());
+		if (!data) console.log('unable to load data');
 
                 var values = data.values;
                 if (Array.isArray(values[0])) {

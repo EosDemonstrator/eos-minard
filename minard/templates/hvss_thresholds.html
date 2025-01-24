@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block title %}HVSS Thresholds{% endblock %}
+{% block head %}
+    {{ super() }}
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/eostable.css') }}" media="screen">
+
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+  <div class="container">
+    <div class="row">
+      <center> <h4 style="color:#04AA6D"> HVSS thresholds </h4> </center>
+      Crate <select id="crate">
+          <option value="0">0</option>
+          <option value="1">1</option>
+      </select>
+      Board <select id="board">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+      </select>
+
+      <table class="table table-bordered" id="eostable">
+        <tr>
+          <th> Channel </th>
+          <th> DAC Threshold </th>
+          <th> TP Voltage </th>
+          <th> DAC Value</th>
+          <th> DAC Dataout0 </th>
+          <th> DAC Dataout1 </th>
+       </tr>
+        {% for i in range(data|length) %}
+          <tr>
+            <td> {{ data[i]['channel'] }} </td>
+            <td> {{ data[i]['dac_voltage'] }} </td>
+            <td> {{ data[i]['tp_voltage'] }} </td>
+            <td> {{ data[i]['dac_val'] }} </td>
+            <td> {{ data[i]['dac_dataout0'] }} </td>
+            <td> {{ data[i]['dac_dataout1'] }} </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+    <script>
+        if (url_params.board) {
+            document.getElementById("board").value = url_params.board;
+        }
+        if (url_params.crate) {
+            document.getElementById("crate").value = url_params.crate;
+        }
+        $("#crate, #board").on("change", function() {
+            var params = {};
+            if (document.getElementById("crate").value != -1) {
+                params['crate'] = document.getElementById("crate").value;
+            }
+            if (document.getElementById("board").value != -1) {
+                params['board'] = document.getElementById("board").value;
+            }
+            window.location.replace($SCRIPT_ROOT + "/hvss_thresholds?" + $.param(params));
+        });
+    </script>
+{% endblock %}

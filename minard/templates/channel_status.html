@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block title %}Channel Status{% endblock %}
+{% block head %}
+    {{ super() }}
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/eostable.css') }}" media="screen">
+
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+  <div class="container">
+    <div class="row">
+      <center> <h4 style="color:#04AA6D"> Channel status </h4> </center>
+      Board <select id="board">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+      </select>
+
+      <table class="table table-bordered" id="eostable">
+        <tr>
+          <th> Channel </th>
+          <th> HV </th>
+          <th> Analog trig. </th>
+          <th> Nhit trig. </th>
+          <th> Test pulse </th>
+          <th> PMT </th>
+          <th> Occupancy </th>
+	  <th> Name </th>
+          <th> Reason </th>
+          <th> Info </th>
+       </tr>
+        {% for i in range(data|length) %}
+          <tr>
+            <td> {{ data[i]['channel'] }} </td>
+            {% if data[i]['hv_status'] %}
+                <td style="color: red;"> Off </td>
+            {% else %}
+                <td style="color: green;"> On </td>
+            {% endif %}
+            {% if data[i]['esum_status'] %}
+                <td style="color: red;"> Broken </td>
+            {% else %}
+                <td style="color: green;"> OK </td>
+            {% endif %}
+            {% if data[i]['nhit_status'] %}
+                <td style="color: red;"> Broken </td>
+            {% else %}
+                <td style="color: green;"> OK </td>
+            {% endif %}
+            {% if data[i]['test_pulse_status'] %}
+                <td style="color: red;"> Broken </td>
+            {% else %}
+                <td style="color: green;"> OK </td>
+            {% endif %}
+            {% if data[i]['pmt_status'] %}
+                <td style="color: red;"> Broken </td>
+            {% else %}
+                <td style="color: green;"> OK </td>
+            {% endif %}
+            {% if data[i]['low_occupancy'] %}
+                <td style="color: red;"> Low </td>
+            {% else %}
+                <td style="color: green;"> OK </td>
+            {% endif %}
+            <td> {{ data[i]['name'] }} </td>
+            <td> {{ data[i]['reason'] }} </td>
+            <td> {{ data[i]['info'] }} </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+    <script>
+        if (url_params.board) {
+            document.getElementById("board").value = url_params.board;
+        }
+        $("#board").on("change", function() {
+            var params = {};
+            if (document.getElementById("board").value != -1) {
+                params['board'] = document.getElementById("board").value;
+            }
+            window.location.replace($SCRIPT_ROOT + "/channel_status?" + $.param(params));
+        });
+    </script>
+{% endblock %}

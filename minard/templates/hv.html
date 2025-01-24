@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% block title %}Eos HV Status{% endblock %}
+{% block head %}
+    {{ super() }}
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/eostable.css') }}" media="screen">
+
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+  <div class="container">
+    <div class="row">
+
+      {% for slot in range(6) %}
+        {% if data[slot] %}
+          <div class="col-md-3">
+            <h1 style="color:#04AA6D"> HV Board {{ slot }} </h1>
+            <table class="table table-bordered" id="eostable">
+              <tr> <th> Temperature: {{ data[slot][0]["temperature"] }} C</th> </tr>
+              <tr> <th> Status: {{ data[slot][0]["slot_status"] }} </th> </tr>
+              <tr> <th> Last poll: {{ ts[slot] }} </th> </tr>
+              <tr> <td style="background-color: #8B8000; color: white"> Not Powered </td> </tr>
+              <tr> <td style="background-color: red; color: white"> Bad current </td> </tr>
+            </table>
+          </div>
+          {% for j in range ( data[slot]|length ) %}
+            {% if j == 0 or j % 16 == 0 %}
+              <div class="col-md-3">
+                <h3> HVSS {{ 3*slot + (j/16) }} </h3>
+                <table class="table table-bordered" id="eostable">
+                  <tr>
+                    <th> Ch </th>
+                    <th> HVSS Ch </th>
+                    <th> HV (V) </th>
+                    <th> I (uA) </th>
+                  </tr>
+                  <tr>
+                    <td> {{ j }} </td>
+                    <td> {{ j % 16 }} </td>
+                    {% if data[slot][j]["powered"] == 1 and data[slot][j]["current"] < 50 %}
+                      <td style="background-color: red; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: red; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% elif data[slot][j]["powered"] == 0 %}
+                      <td style="background-color: #8B8000; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: #8B8000; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% else %}
+                      <td> {{ data[slot][j]["voltage"] }} </td>
+                      <td> {{ data[slot][j]["current"] }} </td>
+                    {% endif %}
+                  </tr>
+            {% elif (j + 1) % 16 == 0 %}
+                  <tr>
+                    <td> {{ j }} </td>
+                    <td> {{ j % 16 }} </td>
+                    {% if data[slot][j]["powered"] == 1 and  data[slot][j]["current"] < 50 %}
+                      <td style="background-color: red; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: red; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% elif data[slot][j]["powered"] == 0 %}
+                      <td style="background-color: #8B8000; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: #8B8000; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% else %}
+                      <td> {{ data[slot][j]["voltage"] }} </td>
+                      <td> {{ data[slot][j]["current"] }} </td>
+                    {% endif %}
+                  </tr>
+                </table>
+              </div>
+            {% else %}
+                  <tr>
+                    <td> {{ j }} </td>
+                    <td> {{ j % 16 }} </td>
+                    {% if data[slot][j]["powered"] == 1 and  data[slot][j]["current"] < 50 %}
+                      <td style="background-color: red; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: red; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% elif data[slot][j]["powered"] == 0 %}
+                      <td style="background-color: #8B8000; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: #8B8000; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% else %}
+                      <td> {{ data[slot][j]["voltage"] }} </td>
+                      <td> {{ data[slot][j]["current"] }} </td>
+                    {% endif %}
+                  </tr>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

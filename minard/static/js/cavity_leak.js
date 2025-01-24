@@ -1,45 +1,24 @@
 $("#step-menu").on("change", function() {
-    window.location.replace($SCRIPT_ROOT + "/cavity-temp?step=" + this.value + "&height=" + height);
+    window.location.replace($SCRIPT_ROOT + "/cavity-leak?step=" + this.value + "&height=" + height);
 });
 
 var context = create_context('#main', step);
 
-var CAVITY_TEMP_SENSORS = [
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16
+var CAVITY_LEAK_SENSORS = [
+  19,
+  20,
+  21,
+  22,
+  23,
+  24
 ];
 
-var AVG_TEMP_VALUES = [
-  980,
-  980,
-  980,
-  980,
-  22,
-  22,
-  22,
-  22,
-  22,
-  980,
-  980,
-  980,
-  980,
-  980,
-  980,
-  15
+var AVG_LEAK_VALUES = [
+  0,
+  0,
+  0,
+  0,
+  0
 ];
 
 function metric(name) {
@@ -92,23 +71,17 @@ function add_horizon(expressions, format, colors, extent, offset) {
         });
 }
 
-//add_horizon(CAVITY_TEMP_SENSORS.map(function(x) { return "temp-" + x; }),
-//            format_temp,
-//            ["#ffffff", "#cc9999"],
-//            [0,4], // [-5, 5]
-//            -13);
-
-CAVITY_TEMP_SENSORS.map(function(sensor, index) {
+CAVITY_LEAK_SENSORS.map(function(sensor, index) {
     const color = ((index >= 0 && index <= 3) || (index >= 9 && index <= 14))
 	? "#cc9999"
 	: "#89ceeb";
 
     return add_horizon(
-        ["temp-" + sensor],
-	format_temp,
+        ["leak-" + sensor],
+	format_water,
 	["#ffffff", color],
 	[0, 4],
-	-1.*AVG_TEMP_VALUES[index]
+	-1.*AVG_LEAK_VALUES[index]
     );
 });
 

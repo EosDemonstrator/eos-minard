@@ -5464,7 +5464,7 @@ function process_histogram(args) {
 
   // histogram data is always single dimension
   var our_data = args.data[0];
-
+  
   var extracted_data;
   if (args.binned === false) {
     // use d3's built-in layout.histogram functionality to compute what you need.

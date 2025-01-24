@@ -28,9 +28,7 @@
         <div class="row">
             <div class="col-md-4">
                 <p>Dispatcher: <span id='dispatcher'></span></p>
-            </div>
-            <div class="col-md-2 col-md-offset-4 text-right">
-                <a href="{{ url_for("snostream",step=step,height=height,display="fecd") }}">Show FEC/D trigger rates</a>
+                <p>SC Dispatcher: <span id='scdispatcher'></span></p>
             </div>
             <div class="col-md-2 text-right">
                 <select id="step-menu">
@@ -72,5 +70,5 @@
                 .catch(error => console.log(error));
         }
     </script>
-    <script src="{{ url_for('static', filename='js/snostream.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/eosstream.js') }}"></script>
 {% endblock %}

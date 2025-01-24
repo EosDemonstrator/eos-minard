@@ -14,13 +14,9 @@ setup(name='minard',
       scripts=glob('bin/*'),
       install_requires=['flask==0.10',
                         'gunicorn',
-                        'numpy',
                         'redis>=2.10',
-                        'argparse',
                         'sphinx',
                         'requests',
                         'sqlalchemy',
-                        'psycopg2',
-                        'alabaster',
-                        'couchdb']
+                        'psycopg2']
       )
