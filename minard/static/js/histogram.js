@@ -110,7 +110,6 @@ function histogram() {
                 .on('mousedown', function(d) { 
                     mouse_down = d3.mouse(element);
                     var x_down = d3.scale.linear().domain(element.__x.domain()).range([0,width]);
-
                     var id = this.id;
 
                     d3.event.preventDefault();
@@ -244,7 +243,7 @@ function histogram() {
                     .attr("y", function(d) { return y(d.y); })
                     .attr("fill", function(d) { return color_scale(d.x); })
                     .attr('width', bin_width)
-                    .attr('height', function(d) { return height - y(d.y) - 1; })
+                    .attr('height', function(d) {return height - y(d.y) - 1; }) /////Getting -1 from here
                     .style({opacity: 1});
 
                 bar.exit().transition().style({opacity: 0}).remove();

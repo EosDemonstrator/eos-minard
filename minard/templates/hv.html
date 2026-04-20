@@ -22,6 +22,7 @@
               <tr> <th> Last poll: {{ ts[slot] }} </th> </tr>
               <tr> <td style="background-color: #8B8000; color: white"> Not Powered </td> </tr>
               <tr> <td style="background-color: red; color: white"> Bad current </td> </tr>
+              <td style="background-color: blue; color: white;"> No PMT </td>
             </table>
           </div>
           {% for j in range ( data[slot]|length ) %}
@@ -38,7 +39,19 @@
                   <tr>
                     <td> {{ j }} </td>
                     <td> {{ j % 16 }} </td>
-                    {% if data[slot][j]["powered"] == 1 and data[slot][j]["current"] < 50 %}
+		    {% if slot == 4 and (j % 16) > 11 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 5 and (j > 28 or (j > 11 and j < 16)) %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 3 and j > 39 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 2 and j > 27 and j < 32 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% elif data[slot][j]["powered"] == 1 and data[slot][j]["current"] < 50 %}
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["voltage"] }} </td>
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["current"] }} </td>
                     {% elif data[slot][j]["powered"] == 0 %}
@@ -53,7 +66,19 @@
                   <tr>
                     <td> {{ j }} </td>
                     <td> {{ j % 16 }} </td>
-                    {% if data[slot][j]["powered"] == 1 and  data[slot][j]["current"] < 50 %}
+		    {% if slot == 4 and (j % 16) > 11 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 5 and (j > 28 or (j > 11 and j < 16)) %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 3 and j > 39 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 2 and j > 27 and j < 32 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% elif data[slot][j]["powered"] == 1 and  data[slot][j]["current"] < 50 %}
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["voltage"] }} </td>
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["current"] }} </td>
                     {% elif data[slot][j]["powered"] == 0 %}
@@ -70,7 +95,19 @@
                   <tr>
                     <td> {{ j }} </td>
                     <td> {{ j % 16 }} </td>
-                    {% if data[slot][j]["powered"] == 1 and  data[slot][j]["current"] < 50 %}
+		    {% if slot == 4 and (j % 16) > 11 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 5 and (j > 28 or (j > 11 and j < 16)) %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 3 and j > 39 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+		    {% elif slot == 2 and j > 27 and j < 32 %}
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["voltage"] }} </td>
+                      <td style="background-color: blue; color: white;"> {{ data[slot][j]["current"] }} </td>
+                    {% elif data[slot][j]["powered"] == 1 and  data[slot][j]["current"] < 50 %}
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["voltage"] }} </td>
                       <td style="background-color: red; color: white;"> {{ data[slot][j]["current"] }} </td>
                     {% elif data[slot][j]["powered"] == 0 %}

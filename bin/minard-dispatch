@@ -100,7 +100,7 @@ def flush_cache(cache, cache_set, cache_nhit, cache_pmt, time):
         prev_key = 'ts:%i:%i:occupancy' % (interval,time//interval-1)
         if redis.incr(prev_key + ':lock') == 1:
             hdivk(prev_key, prev_key + ':hits', prev_key + ':count',
-                  list(range(10240)), format='%.2g', client=p)
+                  list(range(272)), format='%.2g', client=p)
             keys = setavgmax(prev_key, client=p)
             for k in keys:
                 p.expire(k, HASH_EXPIRE*interval)

@@ -249,8 +249,8 @@ def hmincrbyfloat(key, mapping, client=None):
     else:
         keys = key
     sargs = list(map(str, args))
-    print('k:', keys)
-    print('a:', sargs)
+#    print('k:', keys)
+#    print('a:', sargs)
     return _hmincrbyfloat(keys=keys, args=sargs, client=client)
 
 def hmincr(key, fields, client=None):

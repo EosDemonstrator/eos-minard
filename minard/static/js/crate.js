@@ -10,15 +10,16 @@ function createArray(length) {
     return arr;
 }
 
-var crate_setup = createArray(1,17,16);
+// Create a 1x16x17 grid: 1 crate, 16 cards (rows), 17 channels (columns)
+var crate_setup = createArray(1, 16, 17);
 
-for (var i=0; i <1 ; i++) {
-    for (var j=0; j <17; j++) { //changed 18 to 17 so it counts up to 17 cards
-        for (var k=0; k < 16; k++) {
-			//I think this  is bit related and stores a integer value not sure~DF
-			// the << are bitshifts left, while the |'s are bitwise-ors. ~wto
-            crate_setup[i][16-j][k] = (i << 1) | (k << 5) | j;         
-		}
+for (var i = 0; i < 1; i++) {         // 1 crate
+    for (var j = 0; j < 16; j++) {    // 16 cards (rows)
+        for (var k = 0; k < 17; k++) { // 17 channels (columns)
+            // I think this is bit related and stores an integer value not sure~DF
+            // the << are bitshifts left, while the |'s are bitwise-ors. ~wto
+            crate_setup[i][15 - j][k] = (i << 1) | (k << 5) | j;
+        }
     }
 }
 
@@ -31,7 +32,7 @@ function card_view() {
 
     var scale = d3.scale.threshold().domain([100]).range(['#bababa','#ca0020']);
 
-    var format = d3.format('.0f');
+    var format = d3.format('.3f');
 
     function chart(selection) {
         selection.each(function(data) {
@@ -63,7 +64,7 @@ function card_view() {
                 .attr('id','channel')
                 .attr('style','background-color:#e0e0e0')
                 .attr('title', function(d) {
-                    return 'Card ' + ((d >> 5) & 0xf) + ', Channel ' + (d & 0x1f);});
+                    return 'Card ' + ((d >> 5) & 0x1f) + ', Channel ' + (d & 0xf);});
 
             //tr2.insert('td',':first-child').text(function(d, i) { return 31-i; })
             //  .attr('class','card-label-row');

@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 from flask import render_template, jsonify, request, redirect, url_for, flash, make_response
+from itertools import product
 from datetime import datetime
 import numpy as np
 import time
@@ -21,7 +22,7 @@ TRIGGER_NAMES = [
 'Pulsed trigger',
 'Any threshold',
 'High energy veto',
-'Dir. source coinc',
+'Dir. source coinc.',
 'Dir. source',
 'Prompt coinc.',
 'Delayed coinc.',
@@ -214,7 +215,9 @@ def eosstream():
 def detector():
     return render_template('detector.html')
 
-CHANNELS = np.arange(16*17)
+#CHANNELS = np.arange(16*17)
+CHANNELS = [crate << 9 | card << 5 | channel \
+            for crate, card, channel in product(range(20),range(16),range(32))]
 SENSORS = 1+np.arange(24) # SZ
 
 @app.route('/nhit')
@@ -222,6 +225,10 @@ def nhit():
     if not request.args.get("name"):
         return redirect(url_for('nhit', name='all'))
     return render_template('nhit.html',name=request.args.get("name","all"))
+
+@app.route('/daq')
+def daq():
+    return render_template('daq.html')
 
 @app.route('/query')
 @nocache
@@ -243,9 +250,9 @@ def query():
         for i in range(seconds):
             p.lrange('ts:1:{ts}:{name}'.format(ts=now-i,name=name),0,-1)
         nhit = map(int,sum(p.execute(),[]))
-        return jsonify(value=nhit)
+        return jsonify(value=list(nhit))
 
-    if name in ('occupancy','cmos','base','slowcontrols'):
+    if name in ('occupancy','cmos','base','slowcontrols','avgs','sds','charge','time'):
         now = int(time.time())
         step = request.args.get('step',60,type=int)
 
@@ -269,7 +276,7 @@ def query():
             else:
                 i -= 1
 
-        if name in ('cmos', 'base'):
+        if name in ('cmos', 'base', 'avgs','sds','charge','time'):
             # grab latest sum of values and divide by the number
             # of values to get average over that window
             sum_ = redis.hmget('ts:%i:%i:%s:sum' % (interval,i,name),CHANNELS)
@@ -286,11 +293,15 @@ def query():
             hits = redis.hmget('ts:%i:%i:occupancy:hits' % (interval,i), CHANNELS)
             count = int(redis.get('ts:%i:%i:occupancy:count' % (interval,i)))
             if count > 0:
-                values = [int(n)/count if n is not None else None for n in hits]
+                values = [100*(int(n)/count) if n is not None else None for n in hits]
             else:
                 values = [None]*len(CHANNELS)
 
         return jsonify(values=values)
+    if name == 'event_json':
+        evdisp = redis.get('ts:evdisp')
+
+        return jsonify(name=evdisp)
 
 @app.route('/metric_hash')
 @nocache
@@ -317,8 +328,49 @@ def metric_hash():
     stop = int(stop)
     step = int(step)
 
-    values = get_hash_timeseries(name,start,stop,step,crate,card,channel,method)
-    return jsonify(values=values)
+    # Get the appropriate interval based on step size
+    interval = get_hash_interval(step)
+
+    try:
+        p = redis.pipeline()
+        for i in range(start, stop, step):
+            key_base = f'ts:{interval}:{i//interval}:{name}'
+
+            if crate is None:
+                # Get data for all crates
+                key = f'{key_base}:all'
+                p.get(key)
+            elif card is None:
+                # Get data for specific crate
+                key = f'{key_base}:crate:{method}'
+                p.hget(key, crate)
+            elif channel is None:
+                # Get data for specific card
+                key = f'{key_base}:card:{method}'
+                p.hget(key, crate*16 + card)
+            else:
+                # Get data for specific channel
+                key = key_base
+                p.hget(key, crate*16*32 + card*32 + channel)
+
+        values = p.execute()
+
+        # Convert values to float where possible
+        processed_values = []
+        for v in values:
+            try:
+                processed_values.append(float(v) if v is not None else None)
+            except (ValueError, TypeError):
+                processed_values.append(None)
+
+        return jsonify(values=processed_values)
+
+    except Exception as e:
+        app.logger.error(f"Error in metric_hash: {str(e)}")
+        return jsonify(error=str(e)), 500
+
+#    values = get_hash_timeseries(name,start,stop,step,crate,card,channel,method)
+#    return jsonify(values=values)
 
 def get_metric(expr, start, stop, step):
     if expr.split('-')[0] == 'temp':
@@ -509,3 +561,6 @@ def hv():
 
     return render_template("hv.html", data=data, ts=ts)
 
+@app.route('/evdisp')
+def evdisp():
+    return render_template('evdisp.html')

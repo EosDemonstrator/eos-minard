@@ -6,8 +6,9 @@ app = Flask(__name__)
 app.config.from_envvar('MINARD_SETTINGS', silent=False)
 
 # https://medium.com/@trstringer/logging-flask-and-gunicorn-the-manageable-way-2e6f0b8beb2f
-@app.before_first_request
+@app.before_request
 def setup_logging():
+    app.before_request_funcs[None].remove(setup_logging)
     if not app.debug:
         import logging
         gunicorn_logger = logging.getLogger('gunicorn.error')

@@ -15,6 +15,7 @@
       <table class="table table-bordered" id="eostable">
         <tr>
           <th> Run # </th>
+	  <th> Period </th>
           <th> Run type </th>
           <th> Source </th>
           <th> Source z (mm) </th>
@@ -23,6 +24,17 @@
         {% for i in range(data|length) %}
           <tr>
             <td> {{ data[i]['run_number'] }} </td>
+            {% if data[i]['run_number'] < 1999 %}
+              <td> Water </td>
+	    {% elif data[i]['run_number'] < 2999 %}
+	      <td> 1% WbLS </td>
+	    {% elif data[i]['run_number'] < 3999 %}
+	      <td> Water </td>
+	    {% elif data[i]['run_number'] < 5999 %}
+	      <td> 1% WbLS </td>
+	    {% else %}
+	      <td> Unknown </td>
+	    {% endif %}
             <td> {{ run_type[data[i]['run_type']] }} </td>
             {% if data[i]['run_type'] == 3 %}
               <td> {{ source_type[data[i]['source_type']] }} </td>

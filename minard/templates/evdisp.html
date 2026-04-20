@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Eos Event Display</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="pragma" content="no-cache" />
+
+	<style>
+      body {
+        background-color: #000;
+        margin: 10px;
+        overflow: hidden;
+      }.plot {
+        position: absolute;
+        width: 300px;
+        color: white;
+        background: rgba(1,1,1,0.8);
+        border: solid 1px gray;
+      }.slider-container {
+        position: absolute;
+        width: 300px;
+        color: white;
+        background: rgba(1,1,1,0.8);
+        border: solid 1px blue;
+      }.slider-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 20px;
+      } #chargeSlider .ui-slider-range {
+        /*background: linear-gradient(to right, blue, cyan, green, yellow, red);*/
+        background: linear-gradient(to right, #440154, #3B518B, #21918C, #5EC962, #FDE729);
+        border-radius: 0;
+      } #chargeSlider .ui-slider-handle {
+        width: 8px;
+        height: 20px;
+        background: #fff;
+        border: solid 1px #000;
+        border-radius: 0;
+        z-index: -1;
+      } #chargeSlider .ui-slider .ui-slider-range {
+        background: transparent;
+      }.channel {
+        height: 10px;
+        width: 10px;
+        background: #333;
+      }.ui-tooltip {
+        background: #333;
+        color: #fff;
+        border: 1px solid #aaa;
+        padding: 5px;
+        border-radius: 3px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      } #freeze-button{
+        background: red;
+        border-radius: 3px;
+      }
+    </style>
+
+	
+
+  </head>
+
+  <body>
+    <div id="container"></div>
+
+
+
+    <span id="eos-logo" style="position: absolute; top: 10px; left: 10px; width: 100px;"><img src="{{ url_for('static', filename='/images/eos_logo.png') }}" width="100px"/></span>
+    <span id="event-meta"  class="plot" style="top: 10px; left: 130px; width: 180px; height: 90px">
+    <div>
+      <button id="freeze-button">Freeze</button>
+    </div>
+      <b>Eos web evd</b><br/>
+      NHIT: <span id="meta-nhit"></span><br/>
+      GTID: <span id="meta-gtid"></span><br/>
+    </span>
+    <span id="crates" class="plot" style="top: 10px; width: 220px; right: 10px;"></span>
+    <canvas id="grad" width="40" height="214" style="position: absolute; top: 10px; right: 235px;">Sorry, your browser does not support canvas</canvas>
+
+    <div class="slider-container" style="top: 110px; height: 100px">
+        <form action="/action_page.php">
+            <label for="userDate">Date:</label>
+            <input id="userDate" type="date">
+        </form>
+        <div id="timeSlider" style="top: 10px; width: 260px; left: 20px"></div>
+        <div class="time-label" style="text-align: center; margin-top: 15px;">
+            <span id="startLabel">00:00</span> - <span id="endLabel">24:00</span> UTC
+        </div>
+        <div style="text-align: center; margin-top: 5px;">
+            <button onclick="metricsRequest()">Export Time</button>
+        </div>
+    </div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <script src="{{ url_for('static', filename='d3/d3.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/get_date.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/time_slider.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/metrics_request.js') }}"></script>
+
+    <span id="plot-charge" class="plot" style="top: 215px; width: 300px; height: 175px"></span>
+    <div id="chargeBinsControl" style="top: 395px; width: 290px; height:30px; color:white; background:rgba(1,1,1,0.8); border: 1px solid blue; padding: 5px; position:absolute;">
+      <label for="chargeBins">Charge bins:</label>
+      <input id="chargeBins" type="number" min="5" max="200" value="20" style="width:60px;">
+      <button id="updateBins">Update</button>
+    </div>
+
+    <span id="plot-time" class="plot" style="top: 440px; width: 300px; height: 175px"></span>
+
+    <div class="slider-container" style="top: 620px; height: 80px; display: flex; align-items: center; justify-content: space-between;">
+        <div class="slider-group">
+            <div id="chargeSlider" style="width: 110px;" ></div>
+            <div style="text-align: center; margin-top: 5px">
+                <span id="lowerCharge">-10000</span> to <span id="upperCharge">-50</span> pC
+            </div> 
+        </div>
+        <div class="slider-group">
+            <div id="sampleSlider" style="width: 110px;"></div>
+            <div style="text-align: center; margin-top: 5px">
+                <span id="lowerTime">0</span> - <span id="upperTime">100</span> ns
+            </div>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 5px;">
+        <button onclick="metricsRequest()">Update Ranges</button>
+    </div>
+
+	<script src="{{ url_for('static', filename='js/charge_slider.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/sample_slider.js') }}"></script>
+    
+
+    <div class="data-switch-container" style="bottom: 10px; left: 10px; position: fixed">
+        <div style="text-align: center; margin-top: 5px;">
+            <button onclick="toggleData()">View example data</button>
+        </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "{{ url_for('static', filename='js/three.module.js') }}",
+          "three/addons/": "{{ url_for('static', filename='jsm/') }}"
+        }
+      }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/pmtpos.irl.js') }}"></script>
+
+
+    <script type="x-shader/x-vertex" id="vertexshader">
+      attribute float scale;
+      varying vec3 vColor;
+      void main() {
+        vColor = color;
+        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+        gl_PointSize = scale * ( 300.0 / - mvPosition.z );
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    </script>
+
+    <script type="x-shader/x-fragment" id="fragmentshader">
+      varying vec3 vColor;
+      void main() {
+        if ( length( gl_PointCoord - vec2( 0.5, 0.5 ) ) > 0.475 ) discard;
+        gl_FragColor = vec4( vColor, 1.0 );
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from 'three';
+
+      import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+      import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+      import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+      let camera, scene, renderer, controls;
+      let geometry, material, particles;
+      let NPMTS = pmtpos.x.length;
+      let root;
+
+      init();
+      animate();
+      checkAndLoadData();
+
+      function init() {
+        console.log('Initializing scene...');
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050505);
+
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera.position.x = 3000;
+        camera.position.y = 600;
+        camera.position.z = 3000;
+        scene.add(camera);
+
+        // PMTs
+        const color = new THREE.Color();
+        color.setHex(0xaaa);
+        var positions = new Float32Array(pmtpos.x.length * 3);
+        var colors = new Float32Array(pmtpos.x.length * 3);
+        var scales = new Float32Array(pmtpos.x.length);
+
+        for (let i=0; i<scales.length; i++) {
+          positions[3*i+0] = pmtpos.y[i];
+          positions[3*i+1] = pmtpos.z[i];
+          positions[3*i+2] = pmtpos.x[i];
+
+          colors[3*i+0] = color.r;
+          colors[3*i+1] = color.g;
+          colors[3*i+2] = color.b;
+
+          scales[i] = 100;
+        }
+
+        material = new THREE.ShaderMaterial( {
+          uniforms: { 'color': {value: color} },
+          vertexShader: document.getElementById('vertexshader').textContent,
+          fragmentShader: document.getElementById('fragmentshader').textContent,
+          depthTest: true,
+          depthWrite: true,
+          alphaTest: true,
+          vertexColors: true
+        });
+
+        geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
+
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        // Acrylic inner vessel
+        const points = [
+          new THREE.Vector2(0,-1100),
+          new THREE.Vector2(150,-1075),
+          new THREE.Vector2(450,-1000),
+          new THREE.Vector2(750,-900),
+          new THREE.Vector2(914,-677),
+          new THREE.Vector2(914,677),
+          new THREE.Vector2(750,900),
+          new THREE.Vector2(450,1000),
+          new THREE.Vector2(150,1075),
+          new THREE.Vector2(0,1100)
+        ];
+        
+        const av_geo = new THREE.LatheGeometry(points);
+        const av_mat = new THREE.MeshBasicMaterial({ color: 0xaaaaff, transparent: true, opacity: 0.3  });
+        const av = new THREE.Mesh(av_geo, av_mat);
+        scene.add(av);
+
+        //
+
+        renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+        //
+
+        controls = new TrackballControls( camera, renderer.domElement );
+        controls.minDistance = 0;
+        controls.maxDistance = 3000;
+
+        window.addEventListener( 'resize', onWindowResize );
+
+        // crate view
+        var html = '<table style="font-size:4pt"><tr>';
+        var icrate = 0;
+        html += '<td><table style="background:rgba(1,1,1,0.75);padding:2px" cellspacing="1px" cellpadding="1px">';
+        for (var ichan=0; ichan<16; ichan++) {
+          html += '<tr>'
+          for (var icard=0; icard<17; icard++) {
+            html += '<td class="channel" title="0" id="channel-' + icrate + '_' + icard + '_' + ichan + '"></td>';
+          }
+          html += '</tr>';
+        }
+        html += '</table></td>';
+        html += '</tr></table>';
+
+		
+
+        document.getElementById("crates").insertAdjacentHTML('beforeend', html);
+
+        loadHitData();
+
+        console.log('Scene initialized!');
+        //
+
+        //const gui = new GUI();
+        //gui.add( params, 'molecule', MOLECULES ).onChange( loadMolecule );
+        //gui.open();
+      }
+
+      function getJetColorString(val, hex) {
+        val = clamp(val, 0, .875);
+        var red   = Math.floor(clamp(255 * Math.min(4 * val - 1.5, -4 * val + 4.5), 0, 255));
+        var green = Math.floor(clamp(255 * Math.min(4 * val - 0.5, -4 * val + 3.5), 0, 255));
+        var blue  = Math.floor(clamp(255 * Math.min(4 * val + 0.5, -4 * val + 2.5), 0, 255));
+        if (hex)
+          return rgbToHex(red, green, blue);
+
+        return 'rgb(' + red + ',' + green + ',' + blue + ')'
+      }
+
+      function getViridisColorString(val, hex) {
+        // Clamp the input
+        val = clamp(val,0,1);
+        // Viridis polynomial coefficients
+        var c = [
+          [68.0,  1.0, 84.0],    // c0: start (purple)
+          [59.0, 81.0, 139.0],   // c1: blue
+          [33.0, 145.0, 140.0],  // c2: green-cyan
+          [94.0, 201.0, 98.0],   // c3: green
+          [253.0, 231.0, 37.0]   // c4: yellow
+        ];
+
+        // Use an interpolation between points on the 4 intervals
+        var n = c.length - 1;
+        var i = val === 1 ? n - 1 : Math.floor(val * n);
+        var t = val === 1 ? 1 : (val * n - i);
+        var r = Math.round((1 - t) * c[i][0] + t * c[i+1][0]);
+        var g = Math.round((1 - t) * c[i][1] + t * c[i+1][1]);
+        var b = Math.round((1 - t) * c[i][2] + t * c[i+1][2]);
+
+        if (hex)
+          return rgbToHex(r, g, b);
+
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+      }
+
+      function rgbToHex(R,G,B) {
+        var s = toHex(R) + toHex(G) + toHex(B);
+        return '#' + s;
+      }
+
+      function toHex(n) {
+        n = parseInt(n,10);
+        if (isNaN(n)) return "00";
+        n = Math.max(0,Math.min(n,255));
+        return "0123456789ABCDEF".charAt((n-n%16)/16)
+        + "0123456789ABCDEF".charAt(n%16);
+      }
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+      }
+
+      function processData(data) {	
+        const scales = particles.geometry.attributes.scale.array;
+        const colors = particles.geometry.attributes.color.array;
+
+        // ~~~~~~~~~~ Update crates.plot ~~~~~~~~~~
+        //console.log('Removing old data...');
+        var hits = new Array(NPMTS);
+        for (let i=0; i<NPMTS; i++) {
+          hits[i] = -1;
+          var crate = 0;
+          var card = Math.floor(i/16);
+          var channel = Math.floor((i/16-card)*16);
+          var channel_selector = "channel-" + crate + '_' + card + '_' + channel;
+          var elem = document.getElementById(channel_selector);
+          $(elem).removeAttr("title");
+          elem.style.background = '#333333';
+        }
+        var qMax = parseInt(document.getElementById("upperCharge").innerText);
+        var qMin = parseInt(document.getElementById("lowerCharge").innerText);
+        var qScale = qMax - qMin;
+        console.log('Processing data...');
+        for (let i=0; i<data.nhit; i++) {
+          var id = data.id[i];
+          hits[id] = i;
+          var crate = 0;
+          var card = Math.floor(id/16);
+          var channel = Math.floor((id/16-card)*16);
+          var channel_selector = "channel-" + crate + '_' + card + '_' + channel;
+          var elem = document.getElementById(channel_selector);
+          elem.title = data.q[i];
+          $(elem).tooltip();
+          var qval = data.q[i]-qMin;
+          //elem.style.background = getJetColorString(qval/qScale*.875);
+          elem.style.background = getViridisColorString(qval/qScale);
+        }
+        // ~~~~~~~~~~ Update Three particles ~~~~~~~~~~
+        var color = new THREE.Color();
+        var uColor = new THREE.Color('#aaaaaa');
+        var s = 100;
+        for (let i=0; i<hits.length; i++) {
+          if (hits[i] > -1) {
+            var id = hits[i];
+            var qval = data.q[id]-qMin;
+            //var ccc = getJetColorString(qval/qScale*.875, true);
+            var ccc = getViridisColorString(qval/qScale);
+            color.set(ccc);
+            s =  100 + 50 * data.t[id]*dataStruct.t_scale/1000;
+          }
+          else {
+            color.setHex(0xaaaaaa);
+            s = 100; 
+          }
+          colors[3*i+0] = color.r;
+          colors[3*i+1] = color.g;
+          colors[3*i+2] = color.b;
+          scales[i] = s;
+        }
+        geometry.attributes.color.needsUpdate = true;
+        geometry.attributes.scale.needsUpdate = true;
+        // ~~~~~~~~~~ Update metadata values ~~~~~~~~~~
+        document.getElementById("meta-nhit").innerHTML = data.nhit;
+        document.getElementById("meta-gtid").innerHTML = data.gtid;
+        // ~~~~~~~~~~ Update charge & time hists ~~~~~~~~~~
+        var qhist = new Array(data.q.length);
+        var qNumBins = parseInt(document.getElementById("chargeBins")?.value || 20);
+        for (let i=0; i<qhist.length; i++) {
+          qhist[i] = -1;
+        }
+        for (let q=0; q<qhist.length; q++) {
+          qhist[q] = data.q[q];
+        }
+        var q_histogram = d3.layout.histogram()
+          .bins(qNumBins)
+          (qhist);
+        // TO-DO: Make the number of bins changeable by the user with a button      
+ 
+        var plotChargeElem = document.getElementById("plot-charge");
+        console.log(q_histogram);
+
+        var plotChargeWidth = parseFloat(window.getComputedStyle(plotChargeElem).width);
+        var plotChargeHeight = parseFloat(window.getComputedStyle(plotChargeElem).height);
+        var plotChargeRenderHeight = parseFloat(window.getComputedStyle(plotChargeElem).height)-20;
+        var plotChargePadding = 50;
+
+        console.log(plotChargeWidth);
+        var y = d3.scale.linear()
+          .domain([0, d3.max(q_histogram.map(function (i) {return i.length;}))])
+          .range([0,plotChargeRenderHeight-20]);
+        
+        var x = d3.scale.linear()
+           .domain([d3.min(qhist), d3.max(qhist)])
+           .range([0, plotChargeWidth-10]);
+
+        var qXAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom")
+
+        var qYAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left");
+
+        var qCanvas = d3.select('#plot-charge');
+        qCanvas.select("svg").remove();
+        qCanvas = qCanvas.append("svg")
+          .attr("width", plotChargeWidth)
+          .attr("height", plotChargeHeight)
+          .attr("transform","translate(0,0)")
+
+        var qGroup = qCanvas.append("g")
+          .attr("transform", "translate(5," + plotChargeRenderHeight + ")")
+          .attr("class", "x axis")
+          .call(qXAxis);
+        
+        var bars = qCanvas.selectAll(".bar")
+          .data(q_histogram)
+          .enter()
+          .append("g")
+            .attr("transform","translate(0,0)");
+
+        bars.append("rect")
+          .attr("x", function (d) { return 5+x(d.x); })
+          .attr("y", function (d) { return plotChargeRenderHeight - y(d.y); })
+          .attr("width", function (d) { return x(q_histogram[1].x) - x(q_histogram[0].x); })
+          .attr("height", function (d) { return y(d.y); })
+          .attr("fill", "lightskyblue");
+
+        // Add text to histogram bars
+        bars.append("text")
+          .attr("x", function (d) { return 5+x(d.x); })
+          .attr("y", function (d) { return plotChargeRenderHeight-11 - y(d.y); })
+          .attr("dy", "10px")
+          .attr("dx", "10px")
+          .attr("style","fill: #fff")
+          .attr("text-anchor","middle")
+          .text(function (d) {return (d.y>0) ? d.y : null;})
+        d3.selectAll('.axis path, .axis line')
+          .style({'fill': 'none', 'stroke': '#fff', 'shape-rendering': 'crispEdges'});
+
+        d3.selectAll('.axis text')
+          .style({'font-family': 'sans-serif', 'font-size': '9px', 'fill': '#fff'});
+
+        var thist = new Array(data.t.length);
+        var tNumBins = 20;
+        for (let i=0; i<thist.length; i++) {
+          thist[i] = -1;
+        }
+        for (let t=0; t<thist.length; t++) {
+          thist[t] = data.t[t];
+        }
+        var t_histogram = d3.layout.histogram()
+          .bins(tNumBins)
+          (thist);
+        // TO-DO: Make the number of bins changeable by the user with a button      
+ 
+        var plotTimeElem = document.getElementById("plot-time");
+        console.log(t_histogram);
+
+        var plotTimeWidth = parseFloat(window.getComputedStyle(plotTimeElem).width);
+        var plotTimeHeight = parseFloat(window.getComputedStyle(plotTimeElem).height);
+        var plotTimeRenderHeight = parseFloat(window.getComputedStyle(plotTimeElem).height)-20;
+        var plotTimePadding = 50;
+
+        var y = d3.scale.linear()
+          .domain([0, d3.max(t_histogram.map(function (i) {return i.length;}))])
+          .range([0,plotTimeRenderHeight-20]);
+        
+        var x = d3.scale.linear()
+           .domain([0, d3.max(thist)])
+           .range([0, plotTimeWidth-10]);
+
+        var tXAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom")
+
+        var tYAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left");
+
+        var tCanvas = d3.select('#plot-time');
+        tCanvas.select("svg").remove();
+        tCanvas = tCanvas.append("svg")
+          .attr("width", plotTimeWidth)
+          .attr("height", plotTimeHeight)
+          .attr("transform","translate(0,0)")
+
+        var tGroup = tCanvas.append("g")
+          .attr("transform", "translate(5," + plotTimeRenderHeight + ")")
+          .attr("class", "x axis")
+          .call(tXAxis);
+        
+        var bars = tCanvas.selectAll(".bar")
+          .data(t_histogram)
+          .enter()
+          .append("g")
+            .attr("transform","translate(0,0)");
+
+        bars.append("rect")
+          .attr("x", function (d) { return 5+x(d.x); })
+          .attr("y", function (d) { return plotTimeRenderHeight - y(d.y); })
+          .attr("width", function (d) { return x(d.dx); })
+          .attr("height", function (d) { return y(d.y); })
+          .attr("fill", "deepskyblue");
+
+        // Add text to histogram bars
+        bars.append("text")
+          .attr("x", function (d) { return 5+x(d.x); })
+          .attr("y", function (d) { return plotTimeRenderHeight-10 - y(d.y); })
+          .attr("dy", "10px")
+          .attr("dx", function (d) {return x(d.dx)/2; })
+          .attr("style","fill: #fff")
+          .attr("text-anchor","middle")
+          .text(function (d) {return (d.y>0) ? d.y : null;})
+        d3.selectAll('.axis path, .axis line')
+          .style({'fill': 'none', 'stroke': '#fff', 'shape-rendering': 'crispEdges'});
+
+        d3.selectAll('.axis text')
+          .style({'font-family': 'sans-serif', 'font-size': '9px', 'fill': '#fff'});
+        render();
+	  }
+
+      //
+      async function fetchDispatcherStatus() {
+        try {
+          const response = await fetch('http://eos-daq.localdomain/query?name=dispatcher');
+          if (response.ok) {
+            const data = await response.json();
+            return data.name === 'localhost';
+          } else {
+            console.error('Failed to fetch dispatcher status: ', response.status);
+            return false;
+          }
+        } catch (error) {
+          console.error('Error fetching dispatcher status: ', error);
+          return false;
+        }
+      }
+
+      async function loadRunData(name, evNum) {
+        console.log(name, evNum);
+        let file_path;
+        switch(name) {
+          case "137cs_run90":
+            file_path = "{{ url_for('static', filename='datasets/137cs_run90-all.json') }}";
+            break;
+          // Add more cases
+          default:
+            console.error('Invalid dataset name: ', name);
+            return;
+        }
+        if (!file_path) {
+          console.error('File path is not defined for dataset: ', name);
+          return;
+        }
+        try {
+          const response = await fetch(file_path);
+          if (response.ok) {
+            const jsonResponse = await response.json();
+            const validJsonString = jsonResponse[evNum].replace(/'/g, '"');
+            const data = JSON.parse(validJsonString);
+            console.log(data);
+            processData(data);
+            console.log('Run data processed!');
+          }
+        } catch (error) {
+          console.error('Run data request failed: ', error);
+        }
+      }
+      let prev_data;
+      let freeze = true;
+      async function loadHitData() {
+        if (dataStruct.name === "live_data") {
+          try {
+            const response = await fetch('http://eos-daq.localdomain/query?name=event_json');
+            if (response.ok && freeze) {
+              const jsonResponse = await response.json();
+              const validJsonString = jsonResponse.name.replace(/'/g, '"');
+              const data = JSON.parse(validJsonString);
+              console.log(data);
+              processData(data);
+              prev_data = data;
+              console.log('Live data processed!');
+            } else {
+              console.log('Error/freeze: ' + response.status);
+            }
+          } catch (error) {
+            console.error('Request failed: ', error);
+          }
+        } else {
+          try {
+            // I think dataStruct.name cases here... SZ TO-DO
+            const response = await fetch("{{ url_for('static', filename='datasets/137cs_run90-996.json') }}");
+            if (response.ok) {
+              const jsonResponse = await response.json();
+              const validJsonString = jsonResponse.name.replace(/'/g, '"');
+              const data = JSON.parse(validJsonString);
+              console.log(data);
+              processData(data);
+              console.log('Cs137 data processed!');
+            } else {
+              console.log('Error! ' + response.status);
+            }
+          } catch (error) {
+            console.error('Request failed! ', error);
+          }
+        }
+      }
+
+      async function checkAndLoadData() {
+        if (dataStruct.name === "live_data") {
+          const status = await fetchDispatcherStatus();
+          if (status) {
+            await loadHitData();
+            startTimeoutWithCheck(10000);
+          } else {
+            console.log('No dispatcher, trying again in 30s...');
+            startTimeoutWithCheck(30000);
+          }
+        } else {
+          loadRunData(dataStruct.name, document.getElementById('eventNumber').value);
+        }
+      }
+
+      $("#freeze-button").click(function(){
+        if(freeze){
+          freeze = false;
+          $(this).css("background-color", "green");
+          $(this).html("Unfreeze");
+        }
+        else {
+          freeze = true;
+          $(this).css("background-color", "red");
+          $(this).html("Freeze");
+        }
+      })
+      $("#chargeSlider").on("slidechange", function() {
+        if(freeze){
+          loadHitData();
+        }
+        else {
+          processData(prev_data);
+        }
+      });
+
+      $("#updateBins").click(function () {
+        const bins = parseInt(document.getElementById("chargeBins").value);
+        if (!isNaN(bins) && bins > 0) {
+          console.log("Updating charge bins to", bins);
+          if (freeze){
+            loadHitData();  // reload data and re-render with new bin number
+          }
+          else {
+            processData(prev_data);
+          }
+        }
+      });
+
+      function addEventSelector() {
+        console.log('Hello world');
+        const eventMeta = document.getElementById('event-meta');
+        eventMeta.insertAdjacentHTML('beforeend', `
+          <button id="prevEvent" style="background-color:#02CCFE; color:black">&laquo; Prev</button>
+          <input id="eventNumber" style="width: 40px" type="number" name="eventNumber" min="0" max="1000" value="0">
+          <button id="nextEvent" style="background-color:#FFBF00; color:white">Next&raquo;</button>
+        `);
+        // TO-DO: Replace max="1000" with max event number for that specific run
+        const prevEvent = document.getElementById('prevEvent');
+        const nextEvent = document.getElementById('nextEvent');
+        const eventNumber = document.getElementById('eventNumber');
+
+        eventNumber.addEventListener('keydown', function(select) {
+          if (select.key === "Enter") {
+            loadRunData(dataStruct.name, document.getElementById('eventNumber').value);            
+          }
+        });
+        prevEvent.addEventListener('click', () => {
+          if (parseInt(eventNumber.value) > parseInt(eventNumber.min)) {
+            eventNumber.value = parseInt(eventNumber.value) - 1;
+            loadRunData(dataStruct.name, document.getElementById('eventNumber').value);            
+          }
+        });
+        nextEvent.addEventListener('click', () => {
+          if (parseInt(eventNumber.value) < parseInt(eventNumber.max)) {
+            eventNumber.value = parseInt(eventNumber.value) + 1;
+            loadRunData(dataStruct.name, document.getElementById('eventNumber').value);            
+          }
+        });
+      }
+
+      let intervalId;
+      let timeoutId;
+      let stopChecking = false;
+
+      function startTimeoutWithCheck(duration) {
+        stopChecking = false;
+  
+        timeoutId = setTimeout(() => {
+          stopChecking = true;
+          checkAndLoadData(); // Call the original function after the timeout
+        }, duration);
+
+        intervalId = setInterval(() => {
+          if (dataStruct.name !== "live_data") {
+            stopChecking = true;
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
+            addEventSelector();
+            loadRunData(dataStruct.name, document.getElementById('eventNumber').value); // Call the function immediately if the condition changes
+          }
+        }, 1000); // Check every second
+      }
+
+      //
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        render();
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        render();
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
+
+    </script>
+  </body>
+</html>
+
