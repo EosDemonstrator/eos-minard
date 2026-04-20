@@ -1,16 +1,13 @@
 from .db import engine_expert
-from wtforms import Form, IntegerField, FloatField, validators
-
-FORM_KEYS = ['run', 'source', 'x', 'y', 'z', '']
+from wtforms import Form, IntegerField, FloatField, StringField, validators
+from sqlalchemy import text
 
 class GoldInfoForm(Form):
 
-    runnumber = IntegerField('Run Number', [validators.DataRequired()])
-    sourcetype = IntegerField('Source Type', [validators.DataRequired()])
-    xp = FloatField('x (cm)', [validators.DataRequired()])
-    yp = FloatField('y (cm)', [validators.DataRequired()])
-    zp = FloatField('z (cm)', [validators.DataRequired()])
-
+    runnumber = IntegerField('Run Number', [validators.InputRequired()])
+    runtype = IntegerField('Run Type', [validators.InputRequired()])
+    sourcetype = IntegerField('Source Type', [validators.InputRequired()])
+    z = FloatField('z (cm)', [validators.InputRequired()])
 
 def set_gold_information(form):
     """
@@ -18,7 +15,9 @@ def set_gold_information(form):
     """
     conn = engine_expert.connect()
 
-    result = conn.execute(text("INSERT INTO gold_runs (run_number, "
-                 "source_type, x, y, z) "
-                 "VALUES (%(run)s, %(sourcetype)s, "
-                 "%(x)s, %(y)s, %(z)s)", form.data))
+    command = "INSERT INTO gold_runs (run_number, run_type, source_type, source_z_pos) " \
+              "VALUES (%d, %d, %d, %f)" % \
+              (form.runnumber.data, form.runtype.data, form.sourcetype.data, form.z.data)
+
+    conn.execute(text(command))
+

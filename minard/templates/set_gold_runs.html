@@ -3,6 +3,9 @@
 {% block title %} Gold Run Information  {% endblock %}
 {% block head %}
   {{ super() }}
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/eostable.css') }}" media="screen">
+
 {% endblock %}
 {% block body %}
   {{ super() }}
@@ -10,26 +13,73 @@
 <div class="container">
   <div class="row">
     <h1 align="center">Set Gold Runs</h1> <br>
-    <form action="gold_run_information" method="POST" role="form">
-      <table class="table table-hover">
+    <div class="col-md-4">
+    <form action="set_gold_runs" method="POST" role="form">
+
+      <table class="table table-bordered">
          <tr> 
            <td> {{ render_field(form.runnumber) }} </td>
+         </tr>
+         <tr>
+           <td> {{ render_field(form.runtype) }} </td>
          </tr>
          <tr>
            <td> {{ render_field(form.sourcetype) }} </td>
          </tr>
          <tr>
-           <td> {{ render_field(form.xp) }} </td>
-         </tr>
-         <tr>
-           <td> {{ render_field(form.yp) }} </td>
-         </tr>
-         <tr>
-           <td> {{ render_field(form.zp) }} </td>
+           <td> {{ render_field(form.z) }} </td>
          </tr>
       </table>
       <button type="submit">Submit</button>
     </form>
+      </div>
+      <div class="col-md-4">
+      <h4> Run Type Information: </h4>
+      <table class="table table-bordered" id="eostable">
+         <tr>
+           <td> Background / Diagnostic </td>
+           <td> Cosmics </td> 
+           <td> Fiber </td> 
+           <td> Deployed Source </td> 
+         </tr>
+         <tr>
+           <td> 0 </td>
+           <td> 1 </td> 
+           <td> 2 </td> 
+           <td> 3 </td> 
+         </tr>
+      </table>
+      <h4> Source Type Information: </h4>
+      <table class="table table-bordered" id="eostable">
+         <tr>
+           <td> Laserball </td>
+           <td> AmBe </td> 
+           <td> PuBe  </td> 
+           <td> 137Cs </td> 
+           <td> 90Sr Dir  </td> 
+           <td> 106Ru Dir </td> 
+           <td> Thorium  </td> 
+           <td> UVT Cher </td> 
+           <td> UVA Reynolds Cher </td> 
+           <td> UVA Polycast Cher </td> 
+           <td> Tagged Thorium </td> 
+           <td> Pointer </td> 
+         </tr>
+         <tr>
+           <td> 0 </td>
+           <td> 1 </td> 
+           <td> 2 </td> 
+           <td> 3 </td> 
+           <td> 4</td> 
+           <td> 5 </td> 
+           <td> 6 </td> 
+           <td> 7 </td> 
+           <td> 8 </td> 
+           <td> 9 </td> 
+           <td> 10 </td> 
+           <td> 11 </td> 
+         </tr>
+      </table>
   </div>
 </div>
 {% endblock %}
