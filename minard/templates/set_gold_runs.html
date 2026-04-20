@@ -1,0 +1,36 @@
+{% from "_formhelpers.html" import render_field %}
+{% extends "layout.html" %}
+{% block title %} Gold Run Information  {% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block body %}
+  {{ super() }}
+
+<div class="container">
+  <div class="row">
+    <h1 align="center">Set Gold Runs</h1> <br>
+    <form action="gold_run_information" method="POST" role="form">
+      <table class="table table-hover">
+         <tr> 
+           <td> {{ render_field(form.runnumber) }} </td>
+         </tr>
+         <tr>
+           <td> {{ render_field(form.sourcetype) }} </td>
+         </tr>
+         <tr>
+           <td> {{ render_field(form.xp) }} </td>
+         </tr>
+         <tr>
+           <td> {{ render_field(form.yp) }} </td>
+         </tr>
+         <tr>
+           <td> {{ render_field(form.zp) }} </td>
+         </tr>
+      </table>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

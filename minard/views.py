@@ -15,6 +15,7 @@ from minard.timeseries import get_timeseries_field, get_hash_interval
 from minard.timeseries import get_cavity_temp
 from minard.eos import get_eos_runs, get_eos_settings, get_gold_runs, get_channel_status, get_hvss_thresholds, get_trigger_threshold
 from minard.high_voltage import get_all_hvs
+from minard.gold_runs import GoldInfoForm, set_gold_information
 
 TRIGGER_NAMES = [
 'Pulsed trigger',
@@ -25,9 +26,24 @@ TRIGGER_NAMES = [
 'Prompt coinc.',
 'Delayed coinc.',
 ]
-RUN_TYPES = {0: 'Diagnostic', 1: 'Physics', 2: 'Fiber calibration', 3: 'Deployed calibration'}
-SOURCE_TYPES = {0: 'Laserball', 1: 'AmBe', 2: 'PuBe', 3: '137Cs', 4: 'Directional Sr-90', 5: 'Directional Ru-106', 6: 'Thorium', 7: 'Cherenkov UVT', 8: 'Cherenkov UVA Stycast', 9: 'Cherenkov UVA Reynolds'}
 
+RUN_TYPES = {0: 'Diagnostic',
+             1: 'Physics',
+             2: 'Fiber calibration',
+             3: 'Deployed calibration'}
+
+SOURCE_TYPES = {0: 'Laserball',
+                1: 'AmBe',
+                2: 'PuBe',
+                3: '137Cs',
+                4: 'Directional Sr-90',
+                5: 'Directional Ru-106',
+                6: 'Thorium',
+                7: 'Cherenkov UVT',
+                8: 'Cherenkov UVA Stycast',
+                9: 'Cherenkov UVA Reynolds',
+                10: 'Tagged Thorium',
+                11: 'Laser Pointer'}
 
 redis = Redis(decode_responses=True)
 
@@ -393,6 +409,25 @@ def metric():
         return jsonify(values=[get_metric(name, start, stop, step) for name in expr.split(',')])
     else:
         return jsonify(values=get_metric(expr, start, stop, step))
+
+@app.route('/set_gold_runs', methods=["GET", "POST"])
+def set_gold_runs():
+    if request.form:
+        form = GoldInfoForm(request.form)
+    else:
+        form = GoldInfoForm()
+
+    if request.method == "POST" and form.validate():
+        try:
+            set_gold_information(form)
+        except Exception as e:
+            flash(str(e), 'danger')
+            return render_template('set_gold_runs.html', form=form)
+        flash("Successfully submitted", 'success')
+        return redirect(url_for("set_gold_runs"))
+
+    return render_template('set_gold_runs.html', form=form)
+
 
 @app.route("/gold_runs")
 def gold_runs():
