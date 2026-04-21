@@ -28,10 +28,10 @@ TRIGGER_NAMES = [
 'Delayed coinc.',
 ]
 
-RUN_TYPES = {0: 'Diagnostic',
-             1: 'Physics',
-             2: 'Fiber calibration',
-             3: 'Deployed calibration'}
+RUN_TYPES = {0: 'Diagnostic / Background',
+             1: 'Cosmics',
+             2: 'Fiber',
+             3: 'Deployed source'}
 
 SOURCE_TYPES = {0: 'Laserball',
                 1: 'AmBe',

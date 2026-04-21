@@ -7,7 +7,7 @@ class GoldInfoForm(Form):
     runnumber = IntegerField('Run Number', [validators.InputRequired()])
     runtype = IntegerField('Run Type', [validators.InputRequired()])
     sourcetype = IntegerField('Source Type', [validators.InputRequired()])
-    z = FloatField('z (cm)', [validators.InputRequired()])
+    z = FloatField('z (mm)', [validators.InputRequired()])
 
 def set_gold_information(form):
     """
