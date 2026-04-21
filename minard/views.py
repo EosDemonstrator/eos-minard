@@ -16,7 +16,7 @@ from minard.timeseries import get_timeseries_field, get_hash_interval
 from minard.timeseries import get_cavity_temp
 from minard.eos import get_eos_runs, get_eos_settings, get_gold_runs, get_channel_status, get_hvss_thresholds, get_trigger_threshold
 from minard.high_voltage import get_all_hvs
-from minard.gold_runs import GoldInfoForm, set_gold_information
+from minard.gold_runs import GoldInfoForm, set_gold_information, get_gold_runs_by_timestamp
 
 TRIGGER_NAMES = [
 'Pulsed trigger',
@@ -469,16 +469,18 @@ def set_gold_runs():
     else:
         form = GoldInfoForm()
 
+    last_ten_runs = get_gold_runs_by_timestamp()
+
     if request.method == "POST" and form.validate():
         try:
             set_gold_information(form)
         except Exception as e:
             flash(str(e), 'danger')
-            return render_template('set_gold_runs.html', form=form)
+            return render_template('set_gold_runs.html', form=form, last_ten_runs=last_ten_runs)
         flash("Successfully submitted", 'success')
         return redirect(url_for("set_gold_runs"))
 
-    return render_template('set_gold_runs.html', form=form)
+    return render_template('set_gold_runs.html', form=form, last_ten_runs=last_ten_runs, run_type=RUN_TYPES, source_type=SOURCE_TYPES)
 
 
 @app.route("/gold_runs")

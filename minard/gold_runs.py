@@ -1,4 +1,4 @@
-from .db import engine_expert
+from .db import engine_expert, engine
 from wtforms import Form, IntegerField, FloatField, StringField, validators
 from sqlalchemy import text
 
@@ -20,4 +20,23 @@ def set_gold_information(form):
               (form.runnumber.data, form.runtype.data, form.sourcetype.data, form.z.data)
 
     conn.execute(text(command))
+    conn.commit()
+
+
+def get_gold_runs_by_timestamp():
+    '''
+    Returns the list of Eos PMTs
+    '''
+    conn = engine.connect()
+
+    result = conn.execute(text("SELECT * FROM gold_runs ORDER BY timestamp DESC LIMIT 10"))
+
+    keys = result.keys()
+    rows = result.fetchall()
+
+    print (rows)
+
+    conn.close()
+
+    return [dict(zip(keys, row)) for row in rows]
 

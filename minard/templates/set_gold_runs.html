@@ -12,7 +12,7 @@
 
 <div class="container">
   <div class="row">
-    <h1 align="center">Set Gold Runs</h1> <br>
+    <center> <h1 style="color:#04AA6D"> Set Gold Runs </h1> </center>
     <div class="col-md-4">
     <form action="set_gold_runs" method="POST" role="form">
 
@@ -32,54 +32,79 @@
       </table>
       <button type="submit">Submit</button>
     </form>
-      </div>
-      <div class="col-md-4">
-      <h4> Run Type Information: </h4>
-      <table class="table table-bordered" id="eostable">
-         <tr>
-           <td> Background / Diagnostic </td>
-           <td> Cosmics </td> 
-           <td> Fiber </td> 
-           <td> Deployed Source </td> 
-         </tr>
-         <tr>
-           <td> 0 </td>
-           <td> 1 </td> 
-           <td> 2 </td> 
-           <td> 3 </td> 
-         </tr>
-      </table>
-      <h4> Source Type Information: </h4>
-      <table class="table table-bordered" id="eostable">
-         <tr>
-           <td> Laserball </td>
-           <td> AmBe </td> 
-           <td> PuBe  </td> 
-           <td> 137Cs </td> 
-           <td> 90Sr Dir  </td> 
-           <td> 106Ru Dir </td> 
-           <td> Thorium  </td> 
-           <td> UVT Cher </td> 
-           <td> UVA Reynolds Cher </td> 
-           <td> UVA Polycast Cher </td> 
-           <td> Tagged Thorium </td> 
-           <td> Pointer </td> 
-         </tr>
-         <tr>
-           <td> 0 </td>
-           <td> 1 </td> 
-           <td> 2 </td> 
-           <td> 3 </td> 
-           <td> 4</td> 
-           <td> 5 </td> 
-           <td> 6 </td> 
-           <td> 7 </td> 
-           <td> 8 </td> 
-           <td> 9 </td> 
-           <td> 10 </td> 
-           <td> 11 </td> 
-         </tr>
-      </table>
+    </div>
+    <div class="col-md-4">
+    <h4> Run Type Information: </h4>
+    <table class="table table-bordered" id="eostable">
+       <tr>
+         <td> Background / Diagnostic </td>
+         <td> Cosmics </td> 
+         <td> Fiber </td> 
+         <td> Deployed Source </td> 
+       </tr>
+       <tr>
+         <td> 0 </td>
+         <td> 1 </td> 
+         <td> 2 </td> 
+         <td> 3 </td> 
+       </tr>
+    </table>
+    <h4> Source Type Information: </h4>
+    <table class="table table-bordered" id="eostable">
+       <tr>
+         <td> Laserball </td>
+         <td> AmBe </td> 
+         <td> PuBe  </td> 
+         <td> 137Cs </td> 
+         <td> 90Sr Dir  </td> 
+         <td> 106Ru Dir </td> 
+         <td> Thorium  </td> 
+         <td> UVT Cher </td> 
+         <td> UVA Reynolds Cher </td> 
+         <td> UVA Polycast Cher </td> 
+         <td> Tagged Thorium </td> 
+         <td> Pointer </td> 
+       </tr>
+       <tr>
+         <td> 0 </td>
+         <td> 1 </td> 
+         <td> 2 </td> 
+         <td> 3 </td> 
+         <td> 4</td> 
+         <td> 5 </td> 
+         <td> 6 </td> 
+         <td> 7 </td> 
+         <td> 8 </td> 
+         <td> 9 </td> 
+         <td> 10 </td> 
+         <td> 11 </td> 
+       </tr>
+    </table>
+    </div>
+  </div>
+  <div class="row">
+    <center> <h1 style="color:#04AA6D"> Last Ten Gold Runs </h1> </center>
+    <table class="table table-bordered" id="eostable">
+      <tr>
+        <th> Run # </th>
+        <th> Run type </th>
+        <th> Source </th>
+        <th> Source z (mm) </th>
+      </tr>
+      {% for i in range(last_ten_runs|length) %}
+        <tr>
+          <td> {{ last_ten_runs[i]['run_number'] }} </td>
+          <td> {{ run_type[last_ten_runs[i]['run_type']] }} </td>
+	  {% if last_ten_runs[i]['run_type'] == 3 %}
+            <td> {{ source_type[last_ten_runs[i]['source_type']] }} </td>
+            <td> {{ last_ten_runs[i]['source_z_pos'] }} </td>
+	  {% else %}
+	    <td> - </td> 
+	    <td> - </td>
+	  {% endif %}
+        </tr>
+      {% endfor %}
+    </table>
   </div>
 </div>
 {% endblock %}
