@@ -12,7 +12,7 @@
   <div class="container">
     <div class="row">
 
-      {% for slot in range(6) %}
+      {% for slot in slots %}
         {% if data[slot] %}
           <div class="col-md-3">
             <h1 style="color:#04AA6D"> HV Board {{ slot }} </h1>
@@ -28,7 +28,11 @@
           {% for j in range ( data[slot]|length ) %}
             {% if j == 0 or j % 16 == 0 %}
               <div class="col-md-3">
-                <h3> HVSS {{ 3*slot + (j/16) }} </h3>
+		{% if slot < 6 %}
+                    <h3> HVSS {{ 3*slot + (j/16) }} </h3>
+		{% else %}
+		    <h3> Muon Power </h3>
+		{% endif %}
                 <table class="table table-bordered" id="eostable">
                   <tr>
                     <th> Ch </th>
