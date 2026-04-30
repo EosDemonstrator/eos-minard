@@ -551,10 +551,11 @@ def eos_run():
 
 @app.route("/hv")
 def hv():
-    data = []
+    data = {}
     ts = []
-    for slot in range(6):
-        data.append(get_all_hvs(slot))
+    slots = [0, 1, 2, 3, 4, 5, 9, 12]
+    for slot in slots:
+        data[slot] = get_all_hvs(slot)
         try:
             timestamp = data[slot][0]["timestamp"]
             timestamp = str(timestamp)[0:19]
@@ -562,7 +563,7 @@ def hv():
         except Exception as e:
             pass
 
-    return render_template("hv.html", data=data, ts=ts)
+    return render_template("hv.html", data=data, ts=ts, slots=slots)
 
 @app.route('/evdisp')
 def evdisp():
