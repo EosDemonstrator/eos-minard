@@ -36,6 +36,16 @@
 	      <td> 2% WbLS </td>
 	    {% elif data[i]['run_number'] < 7999 %}
 	      <td> Water </td>
+	    {% elif data[i]['run_number'] < 8999 %}
+	      <td> LAB </td>
+	    {% elif data[i]['run_number'] < 9999 %}
+	      <td> LAB [Saber] </td>
+	    {% elif data[i]['run_number'] < 10999 %}
+	      <td> LAB+PPO 2g/L [Saber] </td>
+	    {% elif data[i]['run_number'] < 11999 %}
+	      <td> LAB+PPO 4g/L [Saber] </td>
+	    {% elif data[i]['run_number'] < 12999 %}
+	      <td> LAB+PPO 6g/L [Saber] </td>
 	    {% else %}
 	      <td> Unknown </td>
 	    {% endif %}

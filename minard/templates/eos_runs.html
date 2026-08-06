@@ -18,7 +18,6 @@
           <th> Run # </th>
           <th> Run type </th>
           <th> Events </th>
-          <th> Files </th>
           <th> Source </th>
           <th> Source z (mm) </th>
           <th> Comment </th>
@@ -32,10 +31,8 @@
             <td> {{ run_type[data[i]['run_type']] }} </td>
 	    {% if data[i]['events'] == 1 %}
 	      <td> {{ (data[i]['files']/17) }} </td>
-	      <td> Builder run (N/A) </td>
 	   {% else %}
               <td> {{ data[i]['events']/17 }} </td>
-	      <td> {{ data[i]['files'] }} </td>
            {% endif %}
             {% if data[i]['run_type'] == 3 %}
               {% if data[i]['source_type'] == 0 %}

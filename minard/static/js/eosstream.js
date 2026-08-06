@@ -105,16 +105,15 @@ function add_baseline_horizon(expressions, format, colors, extent, baseline, mv_
 }
 
 add_horizon(TRIGGER_NAMES,format_rate);
-add_horizon(["TOTAL-nhit","TOTAL-charge"], format('.2s'));
-add_horizon(["gtid"],format_int,[]);
-//add_horizon(["run"],format_int,[]);
-//add_horizon(["heartbeat"],format_int,null,[0,4]);
-//add_horizon(["Temperature"],format_temp,null,[0,4]);
-//add_horizon(["Water"],format_water,null,[0,4]);
-//add_horizon(["data_rate"],format_rate, null,[0,4]);
-add_horizon(["d0_ch0_mean"],format_rate, null,[0,4]);
-add_horizon(["temp-16"],format_temp, null,[0,4]);
-add_horizon(["leak-19"],format_water, null,[0,4]);
+add_horizon(["TOTAL-nhit","TOTAL-charge","TOTAL-ncross15","TOTAL-peakTriggerVoltage","TOTAL-avgTriggerVoltage","TOTAL-DirSrcTag"], format('.2s'));
+
+// This doesn't work yet
+//add_horizon(["gtid"],format_int,[]);
+
+// These don't do anything
+//add_horizon(["d0_ch0_mean"],format_rate, null,[0,4]);
+//add_horizon(["temp-16"],format_temp, null,[0,4]);
+//add_horizon(["leak-19"],format_water, null,[0,4]);
 context.on("focus", function(i) {
   d3.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
 });

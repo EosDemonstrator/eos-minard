@@ -45,7 +45,7 @@ SOURCE_TYPES = {0: 'Laserball',
                 9: 'Cherenkov UVA Reynolds',
                 10: 'Laser Pointer',
                 11: 'Tagged Thorium',
-                11: '60Co'}
+                12: '60Co'}
 
 redis = Redis(decode_responses=True)
 
